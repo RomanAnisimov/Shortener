@@ -30,7 +30,7 @@ namespace Shortener.Api.Controllers
         }
 
         [HttpGet]
-        [Route("/{code}")]
+        [Route("{code}")]
         public async Task<IActionResult> Code(string code)
         {
             var link = await codeService.GetLinkByCode(code);
