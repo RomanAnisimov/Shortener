@@ -5,5 +5,7 @@ namespace Shortener.Application.Abstractions.Interfaces;
 
 public interface ICodeService
 {
+    Task<Link?> GetLinkByCode(string code);
+
     Task<Link> GenerateLink(ShortenRequest request);
 }

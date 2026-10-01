@@ -16,7 +16,7 @@ namespace Shortener.Api.Controllers
     {
         [HttpPost]
         [Route("shorten")]
-        public async Task<IActionResult> Get([FromBody] ShortenRequest request)
+        public async Task<IActionResult> Shorten([FromBody] ShortenRequest request)
         {
             if (!Uri.TryCreate(request.Url, UriKind.Absolute, out _))
                 return BadRequest("Invalid URL");
@@ -27,6 +27,22 @@ namespace Shortener.Api.Controllers
             await kafkaProducerService.SendAsync(KafkaTopics.LinkCreated, linkCreated);
 
             return Ok(new { link.Code, shortUrl = $"http://localhost:7777/{link.Code}" });
+        }
+
+        [HttpGet]
+        [Route("/{code}")]
+        public async Task<IActionResult> Code(string code)
+        {
+            var link = await codeService.GetLinkByCode(code);
+            if (link is null) return NotFound();
+
+            if (link.ExpiresAt is not null && link.ExpiresAt < DateTimeOffset.UtcNow)
+                return NotFound();
+
+            var linkClicked = new LinkClicked(code, DateTimeOffset.UtcNow, null, null, null);
+            await kafkaProducerService.SendAsync(KafkaTopics.LinkCreated, linkClicked);
+
+            return Redirect(link.OriginalUrl);
         }
     }
 }

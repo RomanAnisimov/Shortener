@@ -8,6 +8,11 @@ namespace Shortener.Services
         ICodeRepository codeRepository)
         : ICodeService
     {
+        public async Task<Link?> GetLinkByCode(string code)
+        {
+            return await codeRepository.GetLinkByCode(code);
+        }
+
         public async Task<Link> GenerateLink(ShortenRequest request)
         {
             string code;
