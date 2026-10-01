@@ -16,7 +16,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddSingleton<KafkaProducerService>();
 builder.Services.AddScoped<ICodeService, CodeService>();
 builder.Services.AddScoped<ICodeRepository, CodeRepository>();
-builder.Services.AddScoped<IKafkaProducerService, KafkaProducerService>();
+
+builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
+builder.Services.AddSingleton<IKafkaConsumerService, KafkaConsumerService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

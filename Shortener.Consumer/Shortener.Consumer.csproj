@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Shortener.Application\Shortener.Application.csproj" />
     <ProjectReference Include="..\Shortener.Data\Shortener.Data.csproj" />
     <ProjectReference Include="..\Shortener.Shared\Shortener.Shared.csproj" />
   </ItemGroup>
