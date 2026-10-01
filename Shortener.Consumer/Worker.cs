@@ -7,16 +7,16 @@ namespace Shortener.Consumer
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private readonly IKafkaConsumerService _kafkaConsumerService;
         private readonly IConsumer<Ignore, string> _consumer;
+        private readonly IServiceScopeFactory _scopeFactory;
 
 
         public Worker(ILogger<Worker> logger,
             IConfiguration config,
-            IKafkaConsumerService kafkaConsumerService)
+            IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
-            _kafkaConsumerService = kafkaConsumerService;
+            _scopeFactory = scopeFactory;
 
             var consumerConfig = new ConsumerConfig
             {
@@ -38,8 +38,21 @@ namespace Shortener.Consumer
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     var result = _consumer.Consume(stoppingToken);
-                    await _kafkaConsumerService.HandleAsync(result, stoppingToken);
-                    _consumer.Commit(result);
+
+                    try
+                    {
+                        using var scope = _scopeFactory.CreateScope();
+                        var handler = scope.ServiceProvider.GetRequiredService<IKafkaConsumerService>();
+
+                        await handler.HandleAsync(result, stoppingToken);
+                        _consumer.Commit(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex,
+                            "Failed to handle message from {Topic} at {Offset}",
+                            result.Topic, result.Offset);
+                    }
                 }
             }
             catch (OperationCanceledException)

@@ -13,12 +13,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
-builder.Services.AddSingleton<KafkaProducerService>();
+//builder.Services.AddSingleton<KafkaProducerService>();
 builder.Services.AddScoped<ICodeService, CodeService>();
 builder.Services.AddScoped<ICodeRepository, CodeRepository>();
 
-builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
-builder.Services.AddSingleton<IKafkaConsumerService, KafkaConsumerService>();
+builder.Services.AddScoped<IKafkaProducerService, KafkaProducerService>();
+builder.Services.AddScoped<IKafkaConsumerService, KafkaConsumerService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

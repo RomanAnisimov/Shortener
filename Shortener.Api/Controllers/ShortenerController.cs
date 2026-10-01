@@ -1,7 +1,5 @@
-using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 using Shortener.Application.Abstractions.Interfaces;
-using Shortener.Data.Entities;
 using Shortener.Shared;
 using Shortener.Shared.DTO;
 using Shortener.Shared.Events;
@@ -23,6 +21,8 @@ namespace Shortener.Api.Controllers
 
             var link = await codeService.GenerateLink(request);
 
+            await codeService.AddLink(link);
+
             var linkCreated = new LinkCreated(link.Code, request.Url, link.CreatedAt);
             await kafkaProducerService.SendAsync(KafkaTopics.LinkCreated, linkCreated);
 
@@ -40,7 +40,7 @@ namespace Shortener.Api.Controllers
                 return NotFound();
 
             var linkClicked = new LinkClicked(code, DateTimeOffset.UtcNow, null, null, null);
-            await kafkaProducerService.SendAsync(KafkaTopics.LinkCreated, linkClicked);
+            await kafkaProducerService.SendAsync(KafkaTopics.LinkClicked, linkClicked);
 
             return Redirect(link.OriginalUrl);
         }

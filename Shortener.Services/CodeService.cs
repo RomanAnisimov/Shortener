@@ -32,5 +32,10 @@ namespace Shortener.Services
 
             return link;
         }
+
+        public async Task<Link?> AddLink(Link link)
+        {
+            return await codeRepository.AddLink(link);
+        }
     }
 }
