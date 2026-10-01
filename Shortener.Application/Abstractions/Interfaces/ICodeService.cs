@@ -1,0 +1,9 @@
+﻿using Shortener.Data.Entities;
+using Shortener.Shared.DTO;
+
+namespace Shortener.Application.Abstractions.Interfaces;
+
+public interface ICodeService
+{
+    Task<Link> GenerateLink(ShortenRequest request);
+}
