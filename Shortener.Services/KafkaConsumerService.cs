@@ -11,23 +11,14 @@ using System.Text.Json;
 
 namespace Shortener.Services;
 
-public class KafkaConsumerService : IKafkaConsumerService
+public class KafkaConsumerService(
+    ILogger<KafkaConsumerService> logger,
+    IServiceScopeFactory scopeFactory,
+    ICodeRepository codeRepository) : IKafkaConsumerService
 {
-    private readonly ILogger<KafkaConsumerService> _logger;
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly IConsumer<Ignore, string> consumer;
-
-    public KafkaConsumerService(
-        ILogger<KafkaConsumerService> logger,
-        IServiceScopeFactory scopeFactory)
-    {
-        _logger = logger;
-        _scopeFactory = scopeFactory;
-    }
-
     public async Task HandleAsync(ConsumeResult<Ignore, string> result, CancellationToken ct)
     {
-        using var scope = _scopeFactory.CreateScope();
+        using var scope = scopeFactory.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         switch (result.Topic)
@@ -37,16 +28,14 @@ public class KafkaConsumerService : IKafkaConsumerService
                 if (clicked is null) return;
 
                 // Пока наивно: +1 к счётчику. Батчинг добавим позже.
-                await db.Links
-                    .Where(l => l.Code == clicked.Code)
-                    .ExecuteUpdateAsync(s => s.SetProperty(l => l.ClickCount, l => l.ClickCount + 1), ct);
+                await codeRepository.IncreaseClickCountByCode(clicked.Code, 1);
 
-                _logger.LogInformation("Click on {Code}", clicked.Code);
+                logger.LogInformation("Click on {Code}", clicked.Code);
                 break;
 
             case KafkaTopics.LinkCreated:
                 var created = JsonSerializer.Deserialize<LinkCreated>(result.Message.Value);
-                _logger.LogInformation("Link created: {Code}", created?.Code);
+                logger.LogInformation("Link created: {Code}", created?.Code);
                 break;
         }
     }

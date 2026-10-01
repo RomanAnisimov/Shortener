@@ -29,5 +29,12 @@ namespace Shortener.Repository
             
             return link;
         }
+
+        public async Task IncreaseClickCountByCode(string code, int i)
+        {
+            await context.Links
+                .Where(l => l.Code == code)
+                .ExecuteUpdateAsync(s => s.SetProperty(l => l.ClickCount, l => l.ClickCount + 1));
+        }
     }
 }
