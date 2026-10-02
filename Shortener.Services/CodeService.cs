@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Shortener.Application.Abstractions.Interfaces;
 using Shortener.Data.Entities;
 using Shortener.Shared;
@@ -61,7 +62,7 @@ namespace Shortener.Services
 
                     return link;
                 }
-                catch (DbUpdateException) {}
+                catch (DbUpdateException ex) when (IsUniqueCodeViolation(ex)) { }
             }
 
             throw new InvalidOperationException("Could not generate unique code");
@@ -79,5 +80,10 @@ namespace Shortener.Services
             await kafkaProducerService.SendAsync(KafkaTopics.LinkClicked, linkClicked, ct: ct);
             return link;
         }
+
+        private static bool IsUniqueCodeViolation(DbUpdateException ex)
+            => ex.InnerException is PostgresException pg
+               && pg.SqlState == PostgresErrorCodes.UniqueViolation
+               && pg.ConstraintName == "IX_Links_Code";
     }
 }
