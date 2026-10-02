@@ -15,9 +15,9 @@ namespace Shortener.Services
     {
         private const int MaxCodeAttempts = 5;
 
-        public async Task<Link?> GetLinkByCodeAsync(string code)
+        public async Task<Link?> GetLinkByCodeAsync(string code, CancellationToken ct)
         {
-            var link = await cache.GetByCodeAsync(code);
+            var link = await cache.GetByCodeAsync(code, ct);
             var fromCache = link != null;
 
             link ??= await codeRepository.GetLinkByCode(code);
@@ -27,12 +27,12 @@ namespace Shortener.Services
 
             if (link.ExpiresAt != null && link.ExpiresAt < DateTimeOffset.UtcNow)
             {
-                await cache.RemoveAsync(code);
+                await cache.RemoveAsync(code, ct);
                 return null;
             }
 
             if (!fromCache)
-                await cache.SetAsync(link);
+                await cache.SetAsync(link, ct: ct);
 
             return link;
         }
@@ -69,7 +69,7 @@ namespace Shortener.Services
 
         public async Task<Link?> HandleClickAsync(string code, CancellationToken ct = default)
         {
-            var link = await GetLinkByCodeAsync(code);
+            var link = await GetLinkByCodeAsync(code, ct);
             if (link == null)
                 return null;
 

@@ -5,7 +5,7 @@ namespace Shortener.Application.Abstractions.Interfaces;
 
 public interface ICodeService
 {
-    Task<Link?> GetLinkByCodeAsync(string code);
+    Task<Link?> GetLinkByCodeAsync(string code, CancellationToken ct = default);
 
     Task<Link> CreateLinkAsync(ShortenRequest request, CancellationToken ct = default);
 
