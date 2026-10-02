@@ -19,9 +19,7 @@ namespace Shortener.Api.Controllers
             if (!Uri.TryCreate(request.Url, UriKind.Absolute, out _))
                 return BadRequest("Invalid URL");
 
-            var link = await codeService.GenerateLink(request);
-
-            await codeService.AddLink(link);
+            var link = await codeService.CreateLinkAsync(request);
 
             var linkCreated = new LinkCreated(link.Code, request.Url, link.CreatedAt);
             await kafkaProducerService.SendAsync(KafkaTopics.LinkCreated, linkCreated);
@@ -31,16 +29,11 @@ namespace Shortener.Api.Controllers
 
         [HttpGet]
         [Route("{code}")]
-        public async Task<IActionResult> Code(string code)
+        public async Task<IActionResult> Code(string code, CancellationToken ct)
         {
-            var link = await codeService.GetLinkByCode(code);
-            if (link is null) return NotFound();
-
-            if (link.ExpiresAt is not null && link.ExpiresAt < DateTimeOffset.UtcNow)
+            var link = await codeService.HandleClickAsync(code, ct);
+            if (link is null)
                 return NotFound();
-
-            var linkClicked = new LinkClicked(code, DateTimeOffset.UtcNow, null, null, null);
-            await kafkaProducerService.SendAsync(KafkaTopics.LinkClicked, linkClicked);
 
             return Redirect(link.OriginalUrl);
         }

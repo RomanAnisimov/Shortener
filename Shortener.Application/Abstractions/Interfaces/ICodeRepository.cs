@@ -6,8 +6,6 @@ public interface ICodeRepository
 {
     Task<Link?> GetLinkByCode(string code);
 
-    Task<bool> IsCodeExistsAsync(string code);
-
     Task<Link> AddLink(Link link);
 
     Task IncreaseClickCountByCode(string code, int i);

@@ -15,13 +15,6 @@ namespace Shortener.Repository
                 .FirstOrDefaultAsync(x => x.Code == code);
         }
 
-        public async Task<bool> IsCodeExistsAsync(string code)
-        {
-            return await context.Links
-                .AsNoTracking()
-                .AnyAsync(l => l.Code == code);
-        }
-
         public async Task<Link> AddLink(Link link)
         {
             context.Links.Add(link);
