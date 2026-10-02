@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Shortener.Application.Abstractions.Interfaces;
 using Shortener.Data;
 using Shortener.Repository;
+using Shortener.Repository.Caching;
 using Shortener.Services;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +15,16 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
-//builder.Services.AddSingleton<KafkaProducerService>();
 builder.Services.AddScoped<ICodeService, CodeService>();
 builder.Services.AddScoped<ICodeRepository, CodeRepository>();
 
 builder.Services.AddScoped<IKafkaProducerService, KafkaProducerService>();
 builder.Services.AddScoped<IKafkaConsumerService, KafkaConsumerService>();
+
+builder.Services.AddScoped<ILinkCache, RedisLinkCache>();
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+    ConnectionMultiplexer.Connect(builder.Configuration["Redis:Connection"]!));
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

@@ -3,6 +3,7 @@
   <Project Path="Shortener.Application/Shortener.Application.csproj" Id="8906f309-79df-4d99-9056-eddeee81c55c" />
   <Project Path="Shortener.Consumer/Shortener.Consumer.csproj" Id="af6b8908-1979-45bc-909f-498e3c0bd8cb" />
   <Project Path="Shortener.Data/Shortener.Data.csproj" />
+  <Project Path="Shortener.Infrastructure/Shortener.Infrastructure.csproj" Id="47d27df2-43a2-4e64-b5d0-7802e809eb24" />
   <Project Path="Shortener.Repository/Shortener.Repository.csproj" Id="23b8c6e6-6003-4436-a725-a2128fbafcc9" />
   <Project Path="Shortener.Services/Shortener.Services.csproj" Id="e7a1097f-a5e9-4ca2-8f5e-162945f44754" />
   <Project Path="Shortener.Shared/Shortener.Shared.csproj" />
