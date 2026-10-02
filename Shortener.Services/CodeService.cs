@@ -21,9 +21,9 @@ namespace Shortener.Services
             var link = await cache.GetByCodeAsync(code, ct);
             var fromCache = link != null;
 
-            link ??= await codeRepository.GetLinkByCode(code);
+            link ??= await codeRepository.GetLinkByCode(code, ct);
 
-            if (link == null)
+            if (link == null)       
                 return null;
 
             if (link.ExpiresAt != null && link.ExpiresAt < DateTimeOffset.UtcNow)

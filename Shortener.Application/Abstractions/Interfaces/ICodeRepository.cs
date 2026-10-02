@@ -4,9 +4,9 @@ namespace Shortener.Application.Abstractions.Interfaces;
 
 public interface ICodeRepository
 {
-    Task<Link?> GetLinkByCode(string code);
+    Task<Link?> GetLinkByCode(string code, CancellationToken ct = default);
 
-    Task<Link> AddLink(Link link);
+    Task<Link> AddLink(Link link, CancellationToken ct = default);
 
-    Task IncreaseClickCountByCode(string code, int i);
+    Task IncreaseClickCountByCode(string code, int i, CancellationToken ct = default);
 }

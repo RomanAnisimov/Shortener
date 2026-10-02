@@ -8,26 +8,26 @@ namespace Shortener.Repository
     public class CodeRepository(AppDbContext context)
     : ICodeRepository
     {
-        public async Task<Link?> GetLinkByCode(string code)
+        public async Task<Link?> GetLinkByCode(string code, CancellationToken ct = default)
         {
             return await context.Links
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.Code == code);
+                .FirstOrDefaultAsync(x => x.Code == code, ct);
         }
 
-        public async Task<Link> AddLink(Link link)
+        public async Task<Link> AddLink(Link link, CancellationToken ct = default)
         {
             context.Links.Add(link);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(ct);
             
             return link;
         }
 
-        public async Task IncreaseClickCountByCode(string code, int i)
+        public async Task IncreaseClickCountByCode(string code, int i, CancellationToken ct = default)
         {
             await context.Links
                 .Where(l => l.Code == code)
-                .ExecuteUpdateAsync(s => s.SetProperty(l => l.ClickCount, l => l.ClickCount + 1));
+                .ExecuteUpdateAsync(s => s.SetProperty(l => l.ClickCount, l => l.ClickCount + 1), ct);
         }
     }
 }
