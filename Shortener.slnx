@@ -1,4 +1,11 @@
 <Solution>
+  <Folder Name="/docker-compose/" />
+  <Folder Name="/docker-compose/kafka/">
+    <File Path="docker-compose/kafka/docker-compose.yml" />
+  </Folder>
+  <Folder Name="/docker-compose/redis/">
+    <File Path="docker-compose/redis/docker-compose.yml" />
+  </Folder>
   <Project Path="Shortener.Api/Shortener.Api.csproj" />
   <Project Path="Shortener.Application/Shortener.Application.csproj" Id="8906f309-79df-4d99-9056-eddeee81c55c" />
   <Project Path="Shortener.Consumer/Shortener.Consumer.csproj" Id="af6b8908-1979-45bc-909f-498e3c0bd8cb" />
