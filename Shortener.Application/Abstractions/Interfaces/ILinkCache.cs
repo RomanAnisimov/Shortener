@@ -11,4 +11,6 @@ public interface ILinkCache
     Task RemoveAsync(string code, CancellationToken ct = default);
 
     Task<long> IncrementClickCountAsync(string code, CancellationToken ct = default);
+
+    Task<Dictionary<string, long>> GetAndResetClickCountsAsync(IEnumerable<string> codes, CancellationToken ct = default);
 }

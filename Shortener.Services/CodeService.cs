@@ -57,7 +57,7 @@ namespace Shortener.Services
 
                 try
                 {
-                    await codeRepository.AddLink(link);
+                    await codeRepository.AddLink(link, ct);
                     await cache.SetAsync(link, ct: ct);
 
                     return link;

@@ -17,6 +17,7 @@ builder.Services.AddHostedService<Worker>();
 builder.Services.AddScoped<ICodeService, CodeService>();
 builder.Services.AddScoped<ICodeRepository, CodeRepository>();
 builder.Services.AddScoped<IKafkaConsumerService, KafkaConsumerService>();
+builder.Services.AddScoped<IKafkaProducerService, KafkaProducerService>();
 
 builder.Services.AddScoped<ILinkCache, RedisLinkCache>();
 

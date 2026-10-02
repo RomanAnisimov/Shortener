@@ -42,4 +42,21 @@ public class RedisLinkCache(
         var db = redis.GetDatabase();
         return await db.StringIncrementAsync(ClickKey(code));
     }
+
+    public async Task<Dictionary<string, long>> GetAndResetClickCountsAsync(IEnumerable<string> codes, CancellationToken ct = default)
+    {
+        var db = redis.GetDatabase();
+        var result = new Dictionary<string, long>();
+
+        foreach (var code in codes.Distinct())
+        {
+            // GETDEL - atomically reads and deletes (Redis 6.2+)
+            var value = await db.StringGetDeleteAsync(ClickKey(code));
+
+            if (value.HasValue && long.TryParse((string)value!, out var count) && count > 0)
+                result[code] = count;
+        }
+
+        return result;
+    }
 }

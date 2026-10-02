@@ -29,5 +29,20 @@ namespace Shortener.Repository
                 .Where(l => l.Code == code)
                 .ExecuteUpdateAsync(s => s.SetProperty(l => l.ClickCount, l => l.ClickCount + 1), ct);
         }
+
+        public async Task BulkIncrementClickCountsAsync(Dictionary<string, long> counts, CancellationToken ct = default)
+        {
+            if (counts.Count == 0) return;
+
+            //context.UpdateRange();
+
+            foreach (var (code, count) in counts)
+            {
+                await context.Links
+                    .Where(l => l.Code == code)
+                    .ExecuteUpdateAsync(s => s.SetProperty(
+                        l => l.ClickCount, l => l.ClickCount + count), ct);
+            }
+        }
     }
 }
