@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Shortener.Application.Abstractions.Interfaces;
+using Shortener.Application.DTOs;
 using Shortener.Data.Entities;
 using Shortener.Shared;
-using Shortener.Shared.DTO;
 using Shortener.Shared.Events;
 
 namespace Shortener.Services

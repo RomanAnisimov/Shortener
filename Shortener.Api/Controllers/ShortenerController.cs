@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Shortener.Application.Abstractions.Interfaces;
+using Shortener.Application.DTOs;
 using Shortener.Shared;
-using Shortener.Shared.DTO;
 using Shortener.Shared.Events;
 
 namespace Shortener.Api.Controllers

@@ -1,3 +1,3 @@
-﻿namespace Shortener.Shared.DTO;
+﻿namespace Shortener.Application.DTOs;
 
 public record ShortenRequest(string Url, DateTimeOffset? ExpiresAt);

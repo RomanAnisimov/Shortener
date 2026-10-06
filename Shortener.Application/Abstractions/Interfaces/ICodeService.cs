@@ -1,5 +1,5 @@
-﻿using Shortener.Data.Entities;
-using Shortener.Shared.DTO;
+﻿using Shortener.Application.DTOs;
+using Shortener.Data.Entities;
 
 namespace Shortener.Application.Abstractions.Interfaces;
 
