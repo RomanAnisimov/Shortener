@@ -1,30 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
 using Shortener.Application.Abstractions.Interfaces;
 using Shortener.Application.DTOs;
-using Shortener.Shared;
-using Shortener.Shared.Events;
 
 namespace Shortener.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class ShortenerController(
-        ICodeService codeService,
-        IKafkaProducerService kafkaProducerService) : ControllerBase
+        ICodeService codeService) : ControllerBase
     {
         [HttpPost]
         [Route("shorten")]
-        public async Task<IActionResult> Shorten([FromBody] ShortenRequest request)
+        public async Task<IActionResult> Shorten([FromBody] ShortenRequest request, CancellationToken ct)
         {
             if (!Uri.TryCreate(request.Url, UriKind.Absolute, out _))
                 return BadRequest("Invalid URL");
 
-            var link = await codeService.CreateLinkAsync(request);
-
-            var linkCreated = new LinkCreated(link.Code, request.Url, link.CreatedAt);
-            await kafkaProducerService.SendAsync(KafkaTopics.LinkCreated, linkCreated);
-
-            return Ok(new { link.Code, shortUrl = $"https://localhost:7777/{link.Code}" });
+            var response = await codeService.CreateLinkAsync(request, ct);
+            return Ok(response);
         }
 
         [HttpGet]

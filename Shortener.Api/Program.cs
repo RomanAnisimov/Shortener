@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Shortener.Application.Abstractions.Interfaces;
+using Shortener.Application.Options;
 using Shortener.Data;
+using Shortener.Infrastructure.Messaging;
 using Shortener.Repository;
 using Shortener.Repository.Caching;
 using Shortener.Services;
@@ -12,14 +14,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.Configure<AppOptions>(
+    builder.Configuration.GetSection(AppOptions.SectionName));
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres")));
 
+builder.Services.AddSingleton<IEventPublisher, KafkaEventPublisher>();
+builder.Services.AddScoped<IKafkaConsumerService, KafkaConsumerService>();
+
 builder.Services.AddScoped<ICodeService, CodeService>();
 builder.Services.AddScoped<ICodeRepository, CodeRepository>();
-
-builder.Services.AddScoped<IKafkaProducerService, KafkaProducerService>();
-builder.Services.AddScoped<IKafkaConsumerService, KafkaConsumerService>();
 
 builder.Services.AddScoped<ILinkCache, RedisLinkCache>();
 

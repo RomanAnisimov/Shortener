@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shortener.Data\Shortener.Data.csproj" />
+    <ProjectReference Include="..\Shortener.Infrastructure\Shortener.Infrastructure.csproj" />
     <ProjectReference Include="..\Shortener.Repository\Shortener.Repository.csproj" />
     <ProjectReference Include="..\Shortener.Services\Shortener.Services.csproj" />
   </ItemGroup>

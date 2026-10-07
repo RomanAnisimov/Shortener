@@ -6,4 +6,4 @@ public record LinkClicked(
     string? Referer,
     string? UserAgent,
     string? IpAddress
-);
+) : IDomainEvent;

@@ -6,7 +6,6 @@ using Shortener.Application.DTOs;
 using Shortener.Application.Options;
 using Shortener.Data.Entities;
 using Shortener.Services.Mapping;
-using Shortener.Shared;
 using Shortener.Shared.Events;
 
 namespace Shortener.Services
@@ -14,8 +13,8 @@ namespace Shortener.Services
     public class CodeService(
         ICodeRepository codeRepository,
         ILinkCache cache,
-        IKafkaProducerService kafkaProducerService,
-        IOptions<AppOptions> options)
+        IOptions<AppOptions> options,
+        IEventPublisher eventPublisher)
         : ICodeService
     {
         private const int MaxCodeAttempts = 5;
@@ -66,7 +65,7 @@ namespace Shortener.Services
             await cache.IncrementClickCountAsync(code, ct);
 
             var linkClicked = new LinkClicked(code, DateTimeOffset.UtcNow, null, null, null);
-            await kafkaProducerService.SendAsync(KafkaTopics.LinkClicked, linkClicked, ct: ct);
+            await eventPublisher.PublishAsync(linkClicked, ct);
             return LinkMapper.ToLinkResponse(link, _baseUrl);
         }
 

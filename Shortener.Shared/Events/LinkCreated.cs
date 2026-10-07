@@ -4,4 +4,4 @@ public record LinkCreated(
     string Code,
     string OriginalUrl,
     DateTimeOffset CreatedAt
-);
+) : IDomainEvent;

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Shortener.Application\Shortener.Application.csproj" />
+  </ItemGroup>
+
 </Project>
