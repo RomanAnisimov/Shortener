@@ -24,11 +24,11 @@ namespace Shortener.Api.Controllers
             var linkCreated = new LinkCreated(link.Code, request.Url, link.CreatedAt);
             await kafkaProducerService.SendAsync(KafkaTopics.LinkCreated, linkCreated);
 
-            return Ok(new { link.Code, shortUrl = $"http://localhost:7777/{link.Code}" });
+            return Ok(new { link.Code, shortUrl = $"https://localhost:7777/{link.Code}" });
         }
 
         [HttpGet]
-        [Route("{code}")]
+        [Route("/{code}")]
         public async Task<IActionResult> Code(string code, CancellationToken ct)
         {
             var link = await codeService.HandleClickAsync(code, ct);
